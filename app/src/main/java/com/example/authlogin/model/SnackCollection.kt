@@ -19,6 +19,7 @@ package com.example.authlogin.model
 import android.util.Log
 import androidx.compose.runtime.Immutable
 import com.example.authlogin.repository.SnackApi
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -39,14 +40,13 @@ object SnackRepo {
     private val _snackCollections = MutableStateFlow<List<SnackCollection>>(emptyList())
     val snackCollections: StateFlow<List<SnackCollection>> = _snackCollections
 
-    suspend fun fetchData(myApi: SnackApi): List<SnackCollection> {
+    suspend fun fetchData(myApi: SnackApi, currentLocation: LatLng): List<SnackCollection> {
         Log.d("test", "help")
-        val response = myApi.getSnackItems()
-        Log.d("test", "$response")
+        val response = myApi.getSnackItems(currentLocation.latitude, currentLocation.longitude)
         return listOf(
             SnackCollection(
                 id="1L",
-                snacks=response,
+                snacks=response.execute().body()!!,
                 name = "Android's picks",
                 type = CollectionType.Highlight,
             )

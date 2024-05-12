@@ -9,6 +9,7 @@
     <string name="home_cart">My Cart</string>
     <string name="home_profile">Profile</string>
     <string name="home_friend">Friend</string>
+    <string name="home_snacklist">Snack List</string>
 
     <!-- Home -->
     <string name="label_filters">Filters</string>

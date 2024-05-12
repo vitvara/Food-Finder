@@ -17,6 +17,7 @@
 package com.example.authlogin.ui.components
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -63,6 +64,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.authlogin.AuthViewModel
 import com.example.authlogin.R
 import com.example.authlogin.model.CollectionType
 import com.example.authlogin.model.Snack
@@ -71,6 +73,8 @@ import com.example.authlogin.model.snacks
 import com.example.authlogin.ui.theme.JetsnackTheme
 import com.example.authlogin.ui.utils.mirroringIcon
 import com.example.authlogin.ui.components.JetsnackSurface
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 private val HighlightCardWidth = 300.dp
 private val HighlightCardPadding = 16.dp
@@ -83,7 +87,8 @@ fun SnackCollection(
     onSnackClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     index: Int = 0,
-    highlight: Boolean = true
+    highlight: Boolean = true,
+    authViewModel: AuthViewModel
 ) {
     Column(modifier = modifier) {
         Row(
@@ -116,7 +121,7 @@ fun SnackCollection(
                 )
             }
         }
-        HighlightedSnacks(snackCollection.snacks, onSnackClick)
+        HighlightedSnacks(snackCollection.snacks, onSnackClick, authViewModel)
     }
 }
 
@@ -124,6 +129,7 @@ fun SnackCollection(
 private fun HighlightedSnacks(
     snacks: List<Snack>,
     onSnackClick: (String) -> Unit,
+    authViewModel: AuthViewModel,
     modifier: Modifier = Modifier
 ) {
     val rowState = rememberLazyListState()
@@ -145,9 +151,24 @@ private fun HighlightedSnacks(
     val handleDislike = {
         setCurrentIndex((currentIndex + 1) % snacks.size)
     }
-
-    val handleLike = {
+    val firebaseFirestore = Firebase.firestore
+    fun writeDataOnFirestore(studentItem: Snack){
+        val student = HashMap<String, Any>()
+        student["name"] = studentItem.name
+        student["id"] = studentItem.id
+        student["rating"] = studentItem.rating
+        student["userRating"] = studentItem.userRating
+        student["imageUrl"] = studentItem.imageUrl
+        firebaseFirestore.collection(authViewModel.currentUser.value!!.uid).document(studentItem.id)
+            .set(student)
+            .addOnSuccessListener { Log.d("Firebase", "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.w("Firebase", "Error writing document", e) }
+    }
+    fun handleNext(pass: Boolean, snack: Snack) {
         setCurrentIndex((currentIndex + 1) % snacks.size)
+        if (pass) {
+            writeDataOnFirestore(snack)
+        }
     }
 
     LazyRow(
@@ -164,7 +185,8 @@ private fun HighlightedSnacks(
                 gradient = gradient[index % 2],
                 scrollProvider = scrollProvider,
                 currentIndex = currentIndex,
-                handleNext = handleLike
+                handleNextlike = { handleNext(true, snack) },
+                handleNextdislike = { handleNext(false, snack) }
             )
         }
     }
@@ -228,7 +250,8 @@ private fun HighlightSnackItem(
     index: Int,
     gradient: List<Color>,
     scrollProvider: () -> Float,
-    handleNext: () -> Unit,
+    handleNextlike: () -> Unit,
+    handleNextdislike: () -> Unit,
     currentIndex: Int,
     modifier: Modifier = Modifier
 ) {
@@ -281,7 +304,14 @@ private fun HighlightSnackItem(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "test",
+                        text = "Rating: ${snack.rating.toString()}",
+                        style = MaterialTheme.typography.body1,
+                        color = JetsnackTheme.colors.textHelp,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "User Rating (${snack.userRating.toString()})",
                         style = MaterialTheme.typography.body1,
                         color = JetsnackTheme.colors.textHelp,
                         modifier = Modifier.padding(horizontal = 16.dp)
@@ -295,7 +325,7 @@ private fun HighlightSnackItem(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Button(
-                            onClick = handleNext ,
+                            onClick = handleNextdislike ,
                             modifier = Modifier.size(60.dp),
                             shape = CircleShape,
                             contentPadding = PaddingValues(0.dp),
@@ -312,7 +342,7 @@ private fun HighlightSnackItem(
                         }
 
                         Button(
-                            onClick = handleNext,
+                            onClick = handleNextlike,
                             modifier = Modifier.size(60.dp),
                             shape = CircleShape,
                             contentPadding = PaddingValues(0.dp),

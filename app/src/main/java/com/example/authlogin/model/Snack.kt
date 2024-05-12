@@ -17,14 +17,20 @@
 package com.example.authlogin.model
 
 import androidx.compose.runtime.Immutable
+import com.google.gson.annotations.SerializedName
 
 @Immutable
 data class Snack(
-    val name: String,
-    val rating: Double,
-    val userRating: Int,
-    val imageUrl: String,
-    val id: String
+    @SerializedName("name")
+    val name: String = "",
+    @SerializedName("rating")
+    val rating: Double = 0.0,
+    @SerializedName("userRating")
+    val userRating: Int = 0,
+    @SerializedName("imageUrl")
+    val imageUrl: String = "",
+    @SerializedName("id")
+    val id: String = ""
 )
 /**
  * Static data

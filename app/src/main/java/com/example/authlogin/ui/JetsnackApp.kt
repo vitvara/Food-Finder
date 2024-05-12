@@ -17,6 +17,7 @@
 package com.example.authlogin.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -30,11 +31,14 @@ import com.example.authlogin.ui.home.addHomeGraph
 import com.example.authlogin.ui.navigation.MainDestinations
 import com.example.authlogin.ui.navigation.rememberJetsnackNavController
 import com.example.authlogin.ui.theme.JetsnackTheme
+import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun JetsnackApp(
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    currentLocation: MutableState<LatLng>
 ) {
+
     JetsnackTheme {
         val jetsnackNavController = rememberJetsnackNavController()
         NavHost(
@@ -45,7 +49,8 @@ fun JetsnackApp(
                 onSnackSelected = jetsnackNavController::navigateToSnackDetail,
                 upPress = jetsnackNavController::upPress,
                 onNavigateToRoute = jetsnackNavController::navigateToBottomBarRoute,
-                authViewModel = authViewModel
+                authViewModel = authViewModel,
+                currentLocation = currentLocation
             )
         }
     }
@@ -55,13 +60,14 @@ private fun NavGraphBuilder.jetsnackNavGraph(
     onSnackSelected: (String, NavBackStackEntry) -> Unit,
     upPress: () -> Unit,
     onNavigateToRoute: (String) -> Unit,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    currentLocation: MutableState<LatLng>
 ) {
     navigation(
         route = MainDestinations.HOME_ROUTE,
         startDestination = HomeSections.FEED.route
     ) {
-        addHomeGraph(onSnackSelected, onNavigateToRoute, authViewModel)
+        addHomeGraph(onSnackSelected, onNavigateToRoute, authViewModel, currentLocation)
     }
     composable(
         "${MainDestinations.SNACK_DETAIL_ROUTE}/{${MainDestinations.SNACK_ID_KEY}}",

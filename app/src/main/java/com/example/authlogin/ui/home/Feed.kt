@@ -16,8 +16,13 @@
 
 package com.example.authlogin.ui.home
 
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.location.Location
+import android.location.LocationRequest
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -37,6 +42,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,8 +52,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import com.example.authlogin.AuthViewModel
+
 import com.example.authlogin.model.CollectionType
 import com.example.authlogin.model.SnackCollection
 import com.example.authlogin.model.SnackRepo
@@ -57,41 +67,52 @@ import com.example.authlogin.ui.components.JetsnackScaffold
 import com.example.authlogin.ui.components.JetsnackSurface
 import com.example.authlogin.ui.components.SnackCollection
 import com.example.authlogin.ui.theme.JetsnackTheme
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.CallAdapter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.reflect.Type
+
 
 @Composable
 fun Feed(
     onSnackClick: (String) -> Unit,
     onNavigateToRoute: (String) -> Unit,
+    authViewModel: AuthViewModel,
+    currentLocation: MutableState<LatLng>,
     modifier: Modifier = Modifier
 ) {
     val snackCollections = remember { mutableStateOf(emptyList<SnackCollection>()) } // Initial empty list
     val coroutineScope = rememberCoroutineScope()
+    val baseUrl = "http://192.168.1.109:8000" // Replace with your actual base URL
 
+
+
+    val retrofit = Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(CoroutineCallAdapterFactory()) // Add this line
+        .build()
+
+    val myApi: SnackApi = retrofit.create(SnackApi::class.java)
     LaunchedEffect(Unit) {
         coroutineScope.launch {
-            val baseUrl = "http://localhost:8000" // Replace with your actual base URL
 
-            val gson = Gson() // Or use Moshi
-
-            val retrofit =  Retrofit.Builder()
-                .addCallAdapterFactory(
-                    RxJava2CallAdapterFactory.create())
-                .addConverterFactory(
-                    GsonConverterFactory.create())
-                .baseUrl(baseUrl)
-                .build()
-
-            val myApi: SnackApi = retrofit.create(SnackApi::class.java)
-            SnackRepo.fetchData(myApi) // Update state variable
+            snackCollections.value = SnackRepo.fetchData(myApi, currentLocation.value) // Update state variable
 
         }
     }
@@ -109,6 +130,7 @@ fun Feed(
         Feed(
             snackCollections.value,
             onSnackClick,
+            authViewModel,
             Modifier.padding(paddingValues)
         )
     }
@@ -119,12 +141,13 @@ fun Feed(
 private fun Feed(
     snackCollections: List<SnackCollection>,
     onSnackClick: (String) -> Unit,
+    authViewModel: AuthViewModel,
     modifier: Modifier = Modifier
 ) {
 
     JetsnackSurface(modifier = modifier.fillMaxSize()) {
         Box {
-            SnackCollectionList(snackCollections, onSnackClick)
+            SnackCollectionList(snackCollections, onSnackClick, authViewModel)
         }
     }
 }
@@ -133,6 +156,7 @@ private fun Feed(
 private fun SnackCollectionList(
     snackCollections: List<SnackCollection>,
     onSnackClick: (String) -> Unit,
+    authViewModel: AuthViewModel,
     modifier: Modifier = Modifier
 ) {
     var filtersVisible by rememberSaveable { mutableStateOf(false) }
@@ -156,7 +180,8 @@ private fun SnackCollectionList(
                 SnackCollection(
                     snackCollection = snackCollection,
                     onSnackClick = onSnackClick,
-                    index = index
+                    index = index,
+                    authViewModel = authViewModel
                 )
             }
         }
@@ -168,15 +193,5 @@ private fun SnackCollectionList(
         ) + fadeIn(initialAlpha = 0.3f),
         exit = slideOutVertically() + shrinkVertically() + fadeOut()
     ) {
-    }
-}
-
-@Preview("default")
-@Preview("dark theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview("large font", fontScale = 2f)
-@Composable
-fun HomePreview() {
-    JetsnackTheme {
-        Feed(onSnackClick = { }, onNavigateToRoute = { })
     }
 }

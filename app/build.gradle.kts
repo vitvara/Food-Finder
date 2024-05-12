@@ -99,10 +99,17 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-
+    implementation("com.google.firebase:firebase-common-ktx:20.3.3")
+    implementation("dev.gitlive:firebase-firestore:1.8.1") // This line
+    implementation("dev.gitlive:firebase-common:1.8.1")// This line
     implementation ("com.squareup.retrofit2:retrofit:2.3.0")
     implementation ("com.squareup.retrofit2:adapter-rxjava2:2.3.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.3.0")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
     implementation ("io.reactivex.rxjava2:rxandroid:2.0.1")
+    implementation("com.google.android.gms:play-services-location:21.2.0")
+    implementation("com.google.android.gms:play-services-base:18.4.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.35.0-alpha")
 
 }

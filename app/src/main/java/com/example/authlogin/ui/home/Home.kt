@@ -43,6 +43,7 @@ import androidx.compose.material.icons.outlined.AddReaction
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -74,18 +75,25 @@ import com.example.authlogin.ui.home.Feed
 import com.example.authlogin.ui.home.Profile
 import java.util.Locale
 import com.example.authlogin.AuthViewModel
+import com.google.android.gms.maps.model.LatLng
+
 fun NavGraphBuilder.addHomeGraph(
     onSnackSelected: (String, NavBackStackEntry) -> Unit,
     onNavigateToRoute: (String) -> Unit,
     authViewModel: AuthViewModel,
+    currentLocation: MutableState<LatLng>,
     modifier: Modifier = Modifier,
 ) {
     composable(HomeSections.FEED.route) { from ->
-        Feed(onSnackClick = { id -> onSnackSelected(id, from) }, onNavigateToRoute, modifier)
+        Feed(onSnackClick = { id -> onSnackSelected(id, from) }, onNavigateToRoute, authViewModel, currentLocation, modifier)
     }
 
     composable(HomeSections.PROFILE.route) {
         Profile(onNavigateToRoute, modifier, authViewModel)
+    }
+
+    composable(HomeSections.SNACKLIST.route) {
+        SnackListScreen(onNavigateToRoute, authViewModel, modifier)
     }
 }
 
@@ -97,6 +105,8 @@ enum class HomeSections(
     FEED(R.string.home_feed, Icons.Outlined.Home, "home/feed"),
 
     PROFILE(R.string.home_profile, Icons.Outlined.AccountCircle, "home/profile"),
+
+    SNACKLIST(R.string.home_snacklist, Icons.Outlined.AccountCircle, "home/snack_list"),
 }
 
 @Composable
