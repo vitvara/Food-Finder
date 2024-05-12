@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="loginYellow">#FFF6C94A</color>
+    <color name="loginOrange">#FFEF865B</color>
+    <color name="loginBlue">#FF2B3A76</color>
+</resources>
