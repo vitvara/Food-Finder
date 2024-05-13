@@ -68,7 +68,7 @@ dependencies {
     // Add the dependencies for Firebase products you want to use
     // When using the BoM, don't specify versions in Firebase dependencies
     // https://firebase.google.com/docs/android/setup#available-libraries
-    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-auth:23.0.0")
 
     // Add the dependency for the Google Play services library
     implementation("com.google.android.gms:play-services-auth:20.7.0")
@@ -99,9 +99,6 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("com.google.firebase:firebase-common-ktx:20.3.3")
-    implementation("dev.gitlive:firebase-firestore:1.8.1") // This line
-    implementation("dev.gitlive:firebase-common:1.8.1")// This line
     implementation ("com.squareup.retrofit2:retrofit:2.3.0")
     implementation ("com.squareup.retrofit2:adapter-rxjava2:2.3.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.3.0")
@@ -111,5 +108,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-base:18.4.0")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.accompanist:accompanist-permissions:0.35.0-alpha")
+    implementation("com.google.firebase:firebase-firestore:25.0.0")
+
 
 }

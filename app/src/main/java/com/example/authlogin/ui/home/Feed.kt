@@ -163,11 +163,10 @@ private fun SnackCollectionList(
 
     Box(modifier) {
         LazyColumn {
-
             item {
                 Spacer(
                     Modifier.windowInsetsTopHeight(
-                        WindowInsets.statusBars.add(WindowInsets(top = 50.dp))
+                        WindowInsets.statusBars.add(WindowInsets(top = 25.dp))
                     )
                 )
 

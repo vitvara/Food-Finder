@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import com.example.authlogin.AuthViewModel
 import com.example.authlogin.model.AuthState
 import com.example.authlogin.model.DataProvider
+import com.example.authlogin.ui.components.JetsnackButton
 import com.example.authlogin.ui.components.JetsnackScaffold
 import com.example.authlogin.ui.theme.JetsnackTheme
 import com.google.android.gms.auth.api.identity.BeginSignInResult
@@ -100,45 +101,27 @@ fun Profile(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.Center
             ) {
-                Button(
+                Text(text = "User Id: ${authViewModel.currentUser.value!!.uid}")
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                JetsnackButton(
                     onClick = {
                         if (authState != AuthState.Authenticated)
                             openLoginDialog.value = true
                         else
                             authViewModel.signOut()
                     },
-                    modifier = Modifier
-                        .size(width = 180.dp, height = 50.dp)
-                        .padding(horizontal = 16.dp),
                     shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = MaterialTheme.colors.primary,
-                        contentColor = Color.White
-                    )
                 ) {
                     Text(
                         text = if (authState != AuthState.Authenticated) "Sign-in" else "Sign out",
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-
-                Button(
-                    onClick = {
-                        openDeleteAccountAlertDialog.value = true
-                    },
-                    modifier = Modifier
-                        .size(width = 220.dp, height = 50.dp)
-                        .padding(horizontal = 16.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = MaterialTheme.colors.secondary,
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text(
-                        text = "Delete Account",
                         modifier = Modifier.padding(8.dp)
                     )
                 }

@@ -41,6 +41,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AddReaction
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.List
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -102,11 +103,13 @@ enum class HomeSections(
     val icon: ImageVector,
     val route: String
 ) {
+    SNACKLIST(R.string.home_snacklist, Icons.Outlined.List, "home/snack_list"),
+
     FEED(R.string.home_feed, Icons.Outlined.Home, "home/feed"),
 
     PROFILE(R.string.home_profile, Icons.Outlined.AccountCircle, "home/profile"),
 
-    SNACKLIST(R.string.home_snacklist, Icons.Outlined.AccountCircle, "home/snack_list"),
+
 }
 
 @Composable
@@ -160,21 +163,21 @@ fun JetsnackBottomBar(
                             contentDescription = text
                         )
                     },
-                    text = {
-                        Text(
-                            text = text,
-                            color = tint,
-                            style = MaterialTheme.typography.button,
-                            maxLines = 1
-                        )
-                    },
-                    selected = selected,
-                    onSelected = { navigateToRoute(section.route) },
-                    animSpec = springSpec,
-                    modifier = BottomNavigationItemPadding
-                        .clip(BottomNavIndicatorShape)
+            text = {
+                Text(
+                    text = text,
+                    color = tint,
+                    style = MaterialTheme.typography.button,
+                    maxLines = 1
                 )
-            }
+            },
+            selected = selected,
+            onSelected = { navigateToRoute(section.route) },
+            animSpec = springSpec,
+            modifier = BottomNavigationItemPadding
+                .clip(BottomNavIndicatorShape)
+            )
+        }
         }
     }
 }

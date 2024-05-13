@@ -104,22 +104,10 @@ fun SnackCollection(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(2f)
                     .wrapContentWidth(Alignment.Start)
             )
-            IconButton(
-                onClick = { /* todo */ },
-                modifier = Modifier.align(Alignment.CenterVertically)
-            ) {
-                Icon(
-                    imageVector = mirroringIcon(
-                        ltrIcon = Icons.Outlined.ArrowForward,
-                        rtlIcon = Icons.Outlined.ArrowBack
-                    ),
-                    tint = JetsnackTheme.colors.brand,
-                    contentDescription = null
-                )
-            }
+
         }
         HighlightedSnacks(snackCollection.snacks, onSnackClick, authViewModel)
     }

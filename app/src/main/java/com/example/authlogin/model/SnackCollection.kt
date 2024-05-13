@@ -47,7 +47,7 @@ object SnackRepo {
             SnackCollection(
                 id="1L",
                 snacks=response.execute().body()!!,
-                name = "Android's picks",
+                name = "Nearby Restaurant",
                 type = CollectionType.Highlight,
             )
         )
@@ -60,7 +60,7 @@ object SnackRepo {
 
 private val tastyTreats = SnackCollection(
     id = "1L",
-    name = "Android's picks",
+    name = "Nearby Restaurant",
     type = CollectionType.Highlight,
     snacks = listOf(
         Snack(

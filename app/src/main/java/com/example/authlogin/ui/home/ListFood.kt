@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -25,10 +27,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.authlogin.AuthViewModel
 import com.example.authlogin.model.Snack
 import com.example.authlogin.ui.components.JetsnackScaffold
+import com.example.authlogin.ui.theme.JetsnackTheme
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
@@ -71,7 +75,26 @@ fun SnackListScreen(
         },
         modifier = modifier
     ) {
+       Row(
+           verticalAlignment = Alignment.CenterVertically,
+           modifier = Modifier
+               .heightIn(min = 56.dp)
+               .padding(start = 24.dp)
+       ) {
+           Text(
+               text = "Liked restaurant",
+               style = MaterialTheme.typography.h6,
+               color = JetsnackTheme.colors.brand,
+               maxLines = 1,
+               overflow = TextOverflow.Ellipsis,
+               modifier = Modifier
+                   .weight(2f)
+                   .wrapContentWidth(Alignment.Start)
+           )
+
+       }
        LazyColumn(
+           modifier=Modifier.padding(top=50.dp)
        ) {
            itemsIndexed(snacks.value) { idx, snack ->
                SnackItem(snack = snack)
@@ -93,7 +116,8 @@ fun SnackItem(snack: Snack) {
 
         Column(modifier = Modifier.padding(start = 8.dp)) { // Add padding if you include the image
             Text(snack.name, style = MaterialTheme.typography.h6)
-            Text(snack.rating.toString(), style = MaterialTheme.typography.body1)
+            Text("Rating: ${snack.rating.toString()}", style = MaterialTheme.typography.body1)
+            Text("User Rating: ${snack.userRating.toString()}", style = MaterialTheme.typography.body1)
         }
     }
 }

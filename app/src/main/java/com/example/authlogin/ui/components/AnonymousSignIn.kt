@@ -11,7 +11,7 @@ fun AnonymousSignIn() {
     when (val anonymousResponse = DataProvider.anonymousSignInResponse) {
         is Response.Loading -> {
             Log.i("Login:AnonymousSignIn", "Loading")
-            AuthLoginProgressIndicator()
+//            AuthLoginProgressIndicator()
         }
         is Response.Success -> anonymousResponse.data?.let { authResult ->
             Log.i("Login:AnonymousSignIn", "Success: $authResult")

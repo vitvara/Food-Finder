@@ -35,6 +35,7 @@ import com.example.authlogin.model.AuthState
 import com.example.authlogin.model.DataProvider
 import com.example.authlogin.ui.components.AnonymousSignIn
 import com.example.authlogin.ui.components.GoogleSignIn
+import com.example.authlogin.ui.components.JetsnackButton
 import com.example.authlogin.ui.components.OneTapSignIn
 import com.example.authlogin.ui.theme.JetsnackColors
 import com.example.authlogin.ui.theme.JetsnackTheme
@@ -90,41 +91,14 @@ fun LoginScreen(
                 colorFilter = ColorFilter.tint(color = JetsnackTheme.colors.iconInteractive)
             )
 
-            Button(
-                onClick = {
-                    authViewModel.oneTapSignIn()
-                },
-                modifier = Modifier
-                    .size(width = 300.dp, height = 50.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = JetsnackTheme.colors.uiBackground
-                )
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_google_logo),
-                    contentDescription = ""
-                )
-                Text(
-                    text = "Sign in with Google",
-                    modifier = Modifier.padding(6.dp),
-                    color = JetsnackTheme.colors.textHelp
-                )
-            }
-
             if (DataProvider.authState == AuthState.SignedOut) {
-                Button(
+                JetsnackButton(
                     onClick = {
                         authViewModel.signInAnonymously()
-                    },
-                    modifier = Modifier
-                        .size(width = 200.dp, height = 50.dp)
-                        .padding(horizontal = 16.dp),
+                    }
                 ) {
                     Text(
-                        text = "Skip",
+                        text = "Guest Login",
                         modifier = Modifier.padding(6.dp),
                         color = JetsnackTheme.colors.textHelp
                     )
@@ -133,7 +107,7 @@ fun LoginScreen(
         }
     }
 
-    AnonymousSignIn()
+
 
     OneTapSignIn (
         launch = {
